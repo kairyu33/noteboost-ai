@@ -25,7 +25,11 @@ export interface AnalysisData {
   monetization?: any;
   readingTime?: any;
   rewriteSuggestions?: any;
-  seriesIdeas?: any;
+  seriesIdeas?: Array<{
+    title: string;
+    description: string;
+    targetAudience: string;
+  }>;
   viralityScore?: any;
   seoAnalysis?: any;
 }

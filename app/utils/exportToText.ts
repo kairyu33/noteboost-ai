@@ -2,9 +2,9 @@
  * Export analysis results to text format
  */
 
-import { AnalysisResponse } from '@/app/api/analyze-article-full/route';
+import { AnalysisData } from '@/app/components/features/AnalysisResults/AnalysisResults.types';
 
-export function exportAnalysisToText(data: AnalysisResponse): string {
+export function exportAnalysisToText(data: AnalysisData): string {
   const sections: string[] = [];
 
   // Title

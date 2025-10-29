@@ -15,7 +15,7 @@ export async function POST() {
     });
 
     // Clear auth cookie
-    response.cookies.delete('auth');
+    response.cookies.delete('auth-token');
 
     console.log('[Auth] User logged out');
 

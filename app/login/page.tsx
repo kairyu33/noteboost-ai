@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, FormEvent, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 /**
  * Login Page
@@ -12,9 +12,19 @@ import { useRouter } from 'next/navigation';
  */
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [redirectTo, setRedirectTo] = useState('/');
+
+  // Get redirect path from URL parameter
+  useEffect(() => {
+    const from = searchParams.get('from');
+    if (from && from !== '/login') {
+      setRedirectTo(from);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,8 +41,8 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Login successful - redirect to home
-        router.push('/');
+        // Login successful - redirect to original page or home
+        router.push(redirectTo);
         router.refresh();
       } else {
         setError(data.error || 'ログインに失敗しました');
@@ -107,22 +117,7 @@ export default function LoginPage() {
             {/* Error Message */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                <div className="flex items-center">
-                  <svg
-                    className="w-5 h-5 text-red-600 dark:text-red-400 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                </div>
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
               </div>
             )}
 
@@ -164,36 +159,10 @@ export default function LoginPage() {
           {/* Info */}
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-              <p className="flex items-start">
-                <svg
-                  className="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+              <p>
                 ログイン後30日間、パスワード入力不要でご利用いただけます
               </p>
-              <p className="flex items-start">
-                <svg
-                  className="w-5 h-5 mr-2 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
+              <p>
                 パスワードはnoteメンバーシップ限定記事で毎月更新されます
               </p>
             </div>
@@ -203,7 +172,7 @@ export default function LoginPage() {
         {/* Note Link */}
         <div className="mt-6 text-center">
           <a
-            href="https://note.com/"
+            href="https://note.com/happy_recipes/membership"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
